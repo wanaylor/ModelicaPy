@@ -27,7 +27,7 @@ def runSimulation(worDir):
 
     import subprocess
 
-    cmd = ["Dymola",os.path.join(worDir,"runAll.mos")]
+    cmd = ["Dymola",os.path.join(worDir,"runAll.mos"),"/nowindow"]
     logFilNam=os.path.join(worDir, 'stdout.log')
     logFil = open(logFilNam, 'w')
     pro = subprocess.Popen(args=cmd,

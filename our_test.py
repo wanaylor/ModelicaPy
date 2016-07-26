@@ -66,6 +66,7 @@ def run_unit_tests(libHome, rootDir):
     tester.setLibraryRoot(libHome, rootDir)
     #tester.showGUI(show=True)
     tester.setNumberOfThreads(4)
+    tester.batchMode(batchMode=True)
     #tester.setSinglePackage("C:\Users\wn9\Documents\Dymola\NHES-ORNL\NHES-ORNL\Resources\Scripts\Dymola\FuelTest")
 
     numPassed = 0
