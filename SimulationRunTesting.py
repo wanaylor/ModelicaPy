@@ -4,7 +4,9 @@ Created on Tue Jun 28 11:49:00 2016
 
 @author: wn9
 """
-
+"""
+this script is useless
+"""
 import subprocess
 
 #log = "C:\\Users\\wn9\\Documents\\Testing Results\\stdout.log"
