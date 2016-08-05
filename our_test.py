@@ -85,7 +85,7 @@ def run_unit_tests(libHome, rootDir):
     tester.batchMode(batchMode=False)
     tester.deleteTemporaryDirectories(True)
     #tester.setMosLocation(moslocation)
-    #tester.ustExistingResults(dirs)
+    #tester.useExistingResults(dirs)
     #tester.pendanticModelica(pendanticModelica=True)
     #tester.include_fmu_tests(fmu_export=False)
 
