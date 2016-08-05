@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+from __future__ import division
 """
 Created on Thu Jun 09 14:13:04 2016
 
 @author: wn9
 """
 print """
-****************Unit Testing for ModelicaPy v1.0****************
+****************Unit Testing for ModelicaPy v1.1****************
 ---- This is a unit test for any Modelica Library that
 ---- utilizes a modified version of the BuildingsPy library.
 ---- This script was designed to run regression tests when
@@ -22,11 +23,10 @@ print """
 ---- This script assumes it is within ModelicaPy itself.
 ---- However, it can be modified to:
 ---- *Assume Buildingspy is on system path
-----         -Comment out line 52 and 64
-----         -Uncomment line 63
+----         -Comment out line 55
 ---- *Hardcode in a custom path to BuildingsPy
-----         -Comment out line 52
-----         -Uncomment line 54 and enter path manually
+----         -Comment out line 55
+----         -Uncomment line 57 and enter path manually
 ----
 ---- This script will run simulations, gather output, and
 ---- compare to existing results issuing a pass or fail.
@@ -37,16 +37,19 @@ print """
 ---- http://simulationresearch.lbl.gov/modelica/buildingspy/
 ************************************************************
 """
-import sys, os
 
+import sys, os
 
 def run_unit_tests(libHome, rootDir):
     """
     function run_unit_tests takes inputs that are the absolute path to the
     resources folder and top level package.mo
-    this is important since BuildingsPy was written in a way that the resources
-    folder and package.mo must be in the same directory. This does not work in our
-    application since we want to protect the resources folder.
+    This is important since BuildingsPy was written in a way that the resources
+    folder and package.mo must be in the same directory. This script is capable
+    of running unit tests on single packages. By Default it tests all .mos 
+    scripts found in rootDir. Calling with one parameter will run unit tests on
+    the sing package specified e.g. python our_test.py Turbine will test only 
+    the Turbine.mos script.
 
     """
     BPDir = os.path.abspath(os.path.dirname(sys.argv[0]))
@@ -54,20 +57,37 @@ def run_unit_tests(libHome, rootDir):
     #BPDir = ""
 
     print "Looking for BuildingsPy in" , BPDir
+    
     sys.path.append(BPDir)
-
-    #log files are written to the working directory
+    
+    try:
+        import buildingspy.development.regressiontesttwo as regTest
+    except ImportError as e:
+        print "Could not find BuildingsPy in %s" % BPDir
+        raise(e)
+      
+    # ensure log files are written to the working directory
     os.chdir(rootDir)
-
-
-    #import buildingspy.development.regressiontesttwo as regTest
-    import buildingspy.development.regressiontesttwo as regTest
+    
+    
     tester=regTest.Tester(check_html=False)
-    tester.setLibraryRoot(libHome, rootDir)
-    #tester.showGUI(show=True)
+    
+    if len(sys.argv) > 1:
+        command = sys.argv[1]
+        tester.TestSinglePackage(r"%s" % command, SinglePack=True)
+    
+    """
+    Use this section to set parameters for testing
+    """    
+    tester.setLibraryRoot(libHome, rootDir)    
+    tester.showGUI(show=True)
     tester.setNumberOfThreads(4)
-    tester.batchMode(batchMode=True)
-    #tester.setSinglePackage("C:\Users\wn9\Documents\Dymola\NHES-ORNL\NHES-ORNL\Resources\Scripts\Dymola\FuelTest")
+    tester.batchMode(batchMode=False)
+    tester.deleteTemporaryDirectories(True)
+    #tester.setMosLocation(moslocation)
+    #tester.ustExistingResults(dirs)
+    #tester.pendanticModelica(pendanticModelica=True)
+    #tester.include_fmu_tests(fmu_export=False)
 
     numPassed = 0
     numPassedWarn = 0
