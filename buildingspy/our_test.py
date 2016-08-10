@@ -53,24 +53,28 @@ def run_unit_tests(libHome, rootDir):
 
     """
     BPDir = os.path.abspath(os.path.dirname(sys.argv[0]))
-
+    
     #BPDir = ""
 
     print "Looking for BuildingsPy in" , BPDir
     
     sys.path.append(BPDir)
-   
-    # ensure log files are written to the working directory
-    os.chdir(rootDir)
     
     try:
-        import buildingspy.development.regressiontesttwo as regTest
+        import development.regressiontesttwo as regTest
     except ImportError as e:
         print "Could not find BuildingsPy in %s" % BPDir
         raise(e)
+      
+    # ensure log files are written to the working directory
+    os.chdir(rootDir)
+    
     
     tester=regTest.Tester(check_html=False)
-   
+    
+    if len(sys.argv) > 1:
+        command = sys.argv[1]
+        tester.TestSinglePackage(r"%s" % command, SinglePack=True)
     
     """
     Use this section to set parameters for testing
@@ -85,10 +89,6 @@ def run_unit_tests(libHome, rootDir):
     #tester.pendanticModelica(pendanticModelica=True)
     #tester.include_fmu_tests(fmu_export=False)
 
-    if len(sys.argv) > 1:
-        command = sys.argv[1]
-        tester.TestSinglePackage(r"%s" % command, SinglePack=True)    
-    
     numPassed = 0
     numPassedWarn = 0
     numFailed = 0

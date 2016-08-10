@@ -244,6 +244,7 @@ class Tester:
         self._rootPackage = os.path.abspath(rootDir)
         self._Resources = os.path.join(self._rootPackage,"Resources")
         self.isValidLibrary(self._libHome, self._rootPackage)
+        self.dymolaScripts = os.path.join(self._Resources, "Scripts" , "Dymola")
 
     def useExistingResults(self, dirs):
         ''' This function allows to use existing results, as opposed to running a simulation.
@@ -287,6 +288,13 @@ class Tester:
         for root, dirs, file in os.walk(self._rootPackage):
             if name in file:
                 self.SingleMosLocation = os.path.abspath(os.path.join(root,name))
+                print self.SingleMosLocation
+                loc = self.SingleMosLocation
+                splitpath = os.path.split(loc)
+                cutoff = splitpath[0]
+                intermediate = cutoff[len(self.dymolaScripts)+1:]
+                self.intermediateDirs = intermediate
+                
     
     def setNumberOfThreads(self, number):
         ''' Set the number of parallel threads that are used to run the regression tests.
@@ -667,14 +675,13 @@ class Tester:
         if len(self._data) > 0:
             return
         if self.TestOnePackage == True:
-                    print "Testing One Single Package"                    
+                    print "Testing One Single Package"
                     root = self._rootPackage                    
                     mosFil = self.SingleMosLocation
                     if mosFil.endswith('.mos') and (not mosFil.startswith("Convert" + self.getLibraryName())):
                         matFil = ""
                         dat = {}
-                        dat['ScriptDirectory'] = root[\
-                            len(os.path.join(self._rootPackage, 'Resources', 'Scripts', 'Dymola'))+1:]
+                        dat['ScriptDirectory'] = self.intermediateDirs
                         dat['ScriptFile'] = os.path.basename(mosFil)
                         dat['mustSimulate']  = False
                         dat['mustExportFMU'] = False
@@ -789,6 +796,7 @@ class Tester:
 
                                 dat['ResultFile'] = matFil
                         self._data.append(dat)
+                    
                         
         else:
             for root, _, files in os.walk(self._rootPackage):
@@ -917,6 +925,7 @@ class Tester:
     
                                     dat['ResultFile'] = matFil
                             self._data.append(dat)
+                    
                             
         # Make sure we found at least one unit test
         if len(self._data) == 0:
